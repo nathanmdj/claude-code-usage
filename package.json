@@ -1,0 +1,29 @@
+{
+  "name": "@nathanmdj/claude-code-usage",
+  "version": "1.0.0",
+  "description": "Cross-platform Claude Code status line with usage tracking via Anthropic OAuth API",
+  "bin": {
+    "claude-code-usage": "./bin/claude-code-usage.js"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "statusline",
+    "usage",
+    "anthropic",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "opticodelab",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opticodelab/claude-code-usage"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin/",
+    "src/"
+  ]
+}
