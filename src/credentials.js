@@ -1,23 +1,37 @@
-const { execSync } = require('child_process');
-const os = require('os');
+const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
-const SERVICE = 'Claude Code-credentials';
+const SERVICE = "Claude Code-credentials";
+
+function readCredentialsFile() {
+  const credFile = path.join(os.homedir(), ".claude", ".credentials.json");
+  const raw = fs.readFileSync(credFile, "utf-8").trim();
+  return JSON.parse(raw);
+}
 
 function readCredentialsMacOS() {
-  const raw = execSync(
-    `security find-generic-password -s "${SERVICE}" -w`,
-    { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
-  ).trim();
+  const raw = execSync(`security find-generic-password -s "${SERVICE}" -w`, {
+    encoding: "utf-8",
+    stdio: ["pipe", "pipe", "pipe"],
+  }).trim();
   return JSON.parse(raw);
 }
 
 function readCredentialsLinux() {
-  const username = os.userInfo().username;
-  const raw = execSync(
-    `secret-tool lookup service "${SERVICE}" account "${username}"`,
-    { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
-  ).trim();
-  return JSON.parse(raw);
+  // Try secret-tool first (GNOME keyring)
+  try {
+    const username = os.userInfo().username;
+    const raw = execSync(
+      `secret-tool lookup service "${SERVICE}" account "${username}"`,
+      { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] },
+    ).trim();
+    return JSON.parse(raw);
+  } catch {
+    // Fall back to plain credentials file (headless Linux, EC2, WSL)
+    return readCredentialsFile();
+  }
 }
 
 function readCredentialsWindows() {
@@ -39,7 +53,7 @@ function readCredentialsWindows() {
 
   const raw = execSync(
     `powershell -NoProfile -Command "${ps.replace(/"/g, '\\"')}"`,
-    { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
+    { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] },
   ).trim();
   return JSON.parse(raw);
 }
@@ -49,11 +63,11 @@ function getAccessToken() {
   let creds;
 
   try {
-    if (platform === 'darwin') {
+    if (platform === "darwin") {
       creds = readCredentialsMacOS();
-    } else if (platform === 'linux') {
+    } else if (platform === "linux") {
       creds = readCredentialsLinux();
-    } else if (platform === 'win32') {
+    } else if (platform === "win32") {
       creds = readCredentialsWindows();
     } else {
       return null;
