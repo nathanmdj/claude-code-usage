@@ -3,7 +3,7 @@
 Cross-platform Claude Code status line with real-time usage tracking via Anthropic OAuth API.
 
 ```
-boxedflows │ ⎇ main │ Usage: 7% ▓░░░░░░░░░ → Reset: 10:00 PM
+project │ ⎇ main │ Usage: 7% ▓░░░░░░░░░ → Reset: 10:00 PM
 ```
 
 ## Why this one?
